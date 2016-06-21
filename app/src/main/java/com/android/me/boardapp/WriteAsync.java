@@ -1,7 +1,12 @@
 package com.android.me.boardapp;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -26,11 +31,15 @@ import java.net.URL;
   *            쓰레드가 언제 요청을 완료했는지 여부를 알려주며, 각종 편한 메서드를 가지고 있다!
  */
 public class WriteAsync extends AsyncTask<String, Void, String>{
+    Context context;
     String TAG=this.getClass().getName();
     //원격지에 떨어진 웹서버에게 글 등록을 요청하자!!(http 요청 post/get)
     URL url=null;
     HttpURLConnection con=null;
 
+    public WriteAsync(Context context){
+        this.context=context;
+    }
 
     /* 비동기로 웹서버에 요청을 시도할때 주로 사용하는 메서드!!
     * 주의) 이 메서드는 쓰레드가 수행한다!! 여기서 개발자가 반드시 짚고넘어가야할것은
@@ -98,6 +107,25 @@ public class WriteAsync extends AsyncTask<String, Void, String>{
     protected void onPostExecute(String s) {
         //넘겨받은 json 문자열을 대상으로 의미를 파악하자!! (파싱)
         Log.d(TAG, s);
+
+        try {
+            JSONObject jsonObject = new JSONObject(s); //파싱!!
+            String msg=null;
+
+            Log.d(TAG, "resultCode is "+jsonObject.getInt("resultCode"));
+
+            if(jsonObject.getInt("resultCode")==1){
+                msg="등록 성공";
+            }else if(jsonObject.getInt("resultCode")==0){
+                msg="등록 실패";
+            }
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 }
 

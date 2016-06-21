@@ -29,7 +29,7 @@ public class WriteActivity  extends AppCompatActivity {
         Log.d(TAG, "regist 호출??");
 
         //비동기 객체에게 네트워크 작업을 시키자!!!
-        WriteAsync writeAsync = new WriteAsync();
+        WriteAsync writeAsync = new WriteAsync(this);
         writeAsync.execute("http://192.168.13.11:9090/board/regist.jsp"
                 ,edit_title.getText().toString()
                 ,edit_writer.getText().toString()

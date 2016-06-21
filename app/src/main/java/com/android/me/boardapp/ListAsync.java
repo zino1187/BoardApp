@@ -21,7 +21,7 @@ import javax.xml.parsers.SAXParserFactory;
   웹서버로부터 게시물의 목록을가져오되, xml 형식으로 가져오자!!
   xml 파서가 있어야 한다..
  */
-public class ListAsync extends AsyncTask<String, Void ,InputStream>{
+public class ListAsync extends AsyncTask<String, Void ,Void>{
     String TAG=this.getClass().getName();
     ListAdapter listAdapter;
     URL url;
@@ -32,7 +32,7 @@ public class ListAsync extends AsyncTask<String, Void ,InputStream>{
     }
 
     @Override
-    protected InputStream doInBackground(String... params) {
+    protected Void doInBackground(String... params) {
 
         //xml 을 문자열들을 모아놓을 변수!!
         StringBuffer sb = new StringBuffer();
@@ -51,52 +51,39 @@ public class ListAsync extends AsyncTask<String, Void ,InputStream>{
 
             Log.d(TAG, "서버의 응답결과 코드는 "+code);  //200
 
-            if(code == HttpURLConnection.HTTP_OK){ // 200을 의미하는 상수값!!
+            if(code == HttpURLConnection.HTTP_OK) { // 200을 의미하는 상수값!!
                 //xml 데이터를 현지 실행중인 앱으로 가져온다!
 
-                BufferedReader buffr = new BufferedReader(new InputStreamReader(is=con.getInputStream(), "utf-8"));
-                /*
-                String data=null;
-                while(true){
-                    data=buffr.readLine(); //한줄 담기!!
-                    if(data==null)break;
-                    Log.d(TAG, data);
-                    sb.append(data); //xml 모으기!!
+                BufferedReader buffr = new BufferedReader(new InputStreamReader(is = con.getInputStream(), "utf-8"));
+
+                //모아진 xml 문자열을 의미있는 데이터를 추출(파싱)하여 스마트폰에 맞게 보여주기
+                //ListView 에 보여주자!!
+                SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+                try {
+                    SAXParser saxParser = saxParserFactory.newSAXParser();
+                    MyHandler myHandler = new MyHandler();
+                    saxParser.parse(is, myHandler);
+                    //파싱이 끝난 시점에는 ArrayList에 데이터가 채워져 있을 것이므로, 이 데이터를
+                    //ListAdapter가 보유한 ArrayList에 대입하자!!
+                    listAdapter.list = myHandler.list;
+                } catch (ParserConfigurationException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                */
             }
-
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return is;
+        return null;
     }
 
     @Override
-    protected void onPostExecute(InputStream s) {
-        //모아진 xml 문자열을 의미있는 데이터를 추출(파싱)하여 스마트폰에 맞게 보여주기
-        //ListView 에 보여주자!!
-        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-        try {
-            SAXParser saxParser=saxParserFactory.newSAXParser();
-            MyHandler myHandler = new MyHandler();
-            saxParser.parse( s ,  myHandler);
-            //파싱이 끝난 시점에는 ArrayList에 데이터가 채워져 있을 것이므로, 이 데이터를
-            //ListAdapter가 보유한 ArrayList에 대입하자!!
-            listAdapter.list = myHandler.list;
-            listAdapter.notifyDataSetChanged();// 리스트 뷰 갱신요청
-
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
+    protected void onPostExecute(Void v) {
+        listAdapter.notifyDataSetChanged();// 리스트 뷰 갱신요청
     }
 }
