@@ -1,20 +1,24 @@
 package com.android.me.boardapp;
 
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.Formatter;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
-
+    static MainActivity mainActivity;
+    String serverIP;
     ListView listView;
     ListAdapter listAdapter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mainActivity = this;
 
         listView =(ListView)findViewById(R.id.listView);
         listAdapter = new ListAdapter(this);
@@ -37,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
     //리스트 불러오기 메서드 정의
     public void getList(){
-
+        listAdapter.loadData();
+        listAdapter.notifyDataSetChanged();
     }
 
     //메뉴를 선택하면 호출되는 메서드 !!

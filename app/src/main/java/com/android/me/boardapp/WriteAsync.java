@@ -1,6 +1,7 @@
 package com.android.me.boardapp;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -22,8 +23,8 @@ import java.net.URL;
   * 개선책) AsyncTask =  쓰레드 + 핸들러+ ajax의 onreadystatechange 이벤트가 합쳐진 편한객체..
   *            쓰레드가 언제 요청을 완료했는지 여부를 알려주며, 각종 편한 메서드를 가지고 있다!
  */
-public class MyAsync extends AsyncTask<String, Void, String>{
-
+public class WriteAsync extends AsyncTask<String, Void, String>{
+    String TAG=this.getClass().getName();
     //원격지에 떨어진 웹서버에게 글 등록을 요청하자!!(http 요청 post/get)
     URL url=null;
     HttpURLConnection con=null;
@@ -47,12 +48,13 @@ public class MyAsync extends AsyncTask<String, Void, String>{
 
             //파라미터 값들을 전송하자!! ( 바디 정보 셋팅)
             BufferedWriter buffw=new BufferedWriter(new OutputStreamWriter(con.getOutputStream(), "utf-8"));
-            buffw.write("title=난제목임&wrtier=홍길동&content=냉무\n");
+            buffw.write("title="+params[1]+"&writer="+params[2]+"&content="+params[3]+"\n");
             buffw.flush();
             buffw.close();
 
             //웹서버에 요청이 일어나려면 반드시 getResponseCode()
             int code=con.getResponseCode();
+            Log.d(TAG, "code is "+code);
 
         } catch (MalformedURLException e) {
             e.printStackTrace();

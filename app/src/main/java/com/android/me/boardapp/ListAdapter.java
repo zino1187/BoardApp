@@ -27,7 +27,7 @@ public class ListAdapter extends BaseAdapter {
     //리스트 가져오기(갱신) 메서드!!
     public void loadData() {
         listAsync = new ListAsync(this); //비동기 객체 메모리에 생성!!
-        listAsync.execute("http://192.168.43.30:9090/xml/list.jsp");
+        listAsync.execute("http://192.168.13.11:9090/xml/list.jsp");
     }
 
 
