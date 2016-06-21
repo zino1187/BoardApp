@@ -83,8 +83,6 @@ public class WriteAsync extends AsyncTask<String, Void, String>{
                     sb.append(data);
                 }
             }
-
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {

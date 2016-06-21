@@ -42,9 +42,10 @@ public class ListAdapter extends BaseAdapter {
         return null;
     }
 
-    @Override
+    //주로 데이터베이스의 기본키를 반환한다!!( 리스트뷰의 아이템간 유일성을 확보하기 위한 값이므로...)
     public long getItemId(int position) {
-        return 0;
+        Board board=list.get(position);
+        return board.getBoard_id();
     }
 
     @Override

@@ -5,11 +5,16 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
+    String TAG=this.getClass().getName();
     static MainActivity mainActivity;
     String serverIP;
     ListView listView;
@@ -23,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
         listView =(ListView)findViewById(R.id.listView);
         listAdapter = new ListAdapter(this);
         listView.setAdapter(listAdapter);
+
+        //리스트뷰와 리스너와의 연결
+        listView.setOnItemClickListener(this);
     }
 
     //보여질 메뉴를 설정하는 메서드!!
@@ -54,4 +62,14 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    //아이템을 선택하면....
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Toast.makeText(this , "선택한 게시물의 board_id는 " + id, Toast.LENGTH_SHORT).show();
+    }
+
 }
+
+
+
+
