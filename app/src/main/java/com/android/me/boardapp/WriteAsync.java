@@ -3,8 +3,10 @@ package com.android.me.boardapp;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -35,6 +37,8 @@ public class WriteAsync extends AsyncTask<String, Void, String>{
      *        이 메서드내에서는 UI제어할 수 없다!!
     * */
     protected String doInBackground(String... params) {
+        StringBuffer sb = null;
+
         try {
             url = new URL(params[0]);
             con=(HttpURLConnection)url.openConnection();
@@ -56,6 +60,22 @@ public class WriteAsync extends AsyncTask<String, Void, String>{
             int code=con.getResponseCode();
             Log.d(TAG, "code is "+code);
 
+            //서버의 요청 처리가 성공되면, json으로 받은 데이터에 따라 알맞는 메세지를 출력해주자!!
+            if(code == HttpURLConnection.HTTP_OK){
+                //입력스트림으로 데이터 가져오기!!
+                BufferedReader buffr = new BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
+
+                String data=null;
+                sb = new StringBuffer();
+
+                while(true){
+                    data=buffr.readLine();
+                    if(data==null)break;
+                    sb.append(data);
+                }
+            }
+
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -67,7 +87,7 @@ public class WriteAsync extends AsyncTask<String, Void, String>{
             }
         }
 
-        return null;
+        return sb.toString();
     }
 
     /*
@@ -76,7 +96,8 @@ public class WriteAsync extends AsyncTask<String, Void, String>{
     * 결국 Handler를 사용할 필요가 없다!!
     * */
     protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+        //넘겨받은 json 문자열을 대상으로 의미를 파악하자!! (파싱)
+        Log.d(TAG, s);
     }
 }
 
